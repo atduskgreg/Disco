@@ -12,6 +12,8 @@ import java.util.TreeMap;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.HashSet;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 
 String emailDirectory = "emails/cuilla-m";
 
@@ -26,18 +28,30 @@ ArrayList<String> allAddresses;
 float percentTrain = 0.3;
 
 float[] featureVectorFromEmail(Email email) {
-  float[] result = new float[2];
+  float[] result = new float[allAddresses.size() + 1]; // vector size is number of email addresses plus one for the scaled-date
   try {
     ArrayList<String> emailAddresses = new ArrayList<String>();
     emailAddresses.add(email.getFrom());
     emailAddresses.addAll(Arrays.asList(email.getRecipients()));
-    result = addressBow(emailAddresses);
-   
+    float[] addressBow = addressBow(emailAddresses);
+    float scaledDate = scaledDate(email.getDate());
+    System.arraycopy(addressBow, 0, result, 0, addressBow.length);
+    result[addressBow.length] = scaledDate; 
   }
   catch(Exception e) {
     println("error loading email: " + e.toString());
   }
   return result;
+}
+
+float scaledDate(Date d) {
+  GregorianCalendar startDate = new GregorianCalendar(1998, 1, 1);
+  GregorianCalendar endDate = new GregorianCalendar(2004, 1, 1);
+
+  long elapsedTime = d.getTime() - startDate.getTimeInMillis();
+  long totalTime = endDate.getTimeInMillis() - startDate.getTimeInMillis();
+    
+  return ((float)elapsedTime/(float)totalTime);
 }
 
 float[] addressBow(ArrayList<String> emailAddresses) {
@@ -100,7 +114,6 @@ void setup() {
   }
 
   removeDuplicates(allAddresses);
-  println("num addresses found: " + allAddresses.size());
 
   if (saveBags) {
     String[] addressesCSV = allAddresses.toArray(new String[allAddresses.size()]);
@@ -120,7 +133,7 @@ void setup() {
       test.add(new Sample(featureVectorFromEmail(email), 1));
     }
   }
-
+  println("num addresses found: " + allAddresses.size());
   println("Train: " + train.size() + " Test: " + test.size() + " percent: " + (float)train.size()/(test.size() + train.size()));
 
 

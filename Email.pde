@@ -3,6 +3,7 @@ import java.util.Properties;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.Enumeration;
+import java.util.Date;
 
 class Email {
   MimeMessage parsedMessage;
@@ -31,8 +32,8 @@ class Email {
     return ((InternetAddress)parsedMessage.getFrom()[0]).getAddress();
   }
 
-  String getDate() throws MessagingException, IOException {
-    return parsedMessage.getSentDate().toString();
+  Date getDate() throws MessagingException, IOException {
+    return parsedMessage.getSentDate();
   }
 
   String[] getRecipients() throws MessagingException, IOException {

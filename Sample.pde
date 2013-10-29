@@ -9,7 +9,7 @@ class Sample {
       this.featureVector[i] = (double)floatVector[i];
     }
     
-    println(featureVector[0] + " " + floatVector[0]);
+   // println(featureVector[0] + " " + floatVector[0]);
     
     this.label = label;
   }

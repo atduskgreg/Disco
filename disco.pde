@@ -13,26 +13,45 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.HashSet;
 
-ArrayList<String[]> train;
-ArrayList<String[]> test;
+String emailDirectory = "emails/cuilla-m";
+
+ArrayList<Sample> train;
+ArrayList<Sample> test;
 
 boolean buildBags = true;
 boolean saveBags = true;
 
 ArrayList<String> allAddresses;
 
-
 float percentTrain = 0.3;
 
-String[] featureVectorFromEmail(Email email) {
-  String[] result = new String[2];
+float[] featureVectorFromEmail(Email email) {
+  float[] result = new float[2];
   try {
-    result[0] = email.getSubject();
-    result[1] = email.getFrom();
-  } 
+    ArrayList<String> emailAddresses = new ArrayList<String>();
+    emailAddresses.add(email.getFrom());
+    emailAddresses.addAll(Arrays.asList(email.getRecipients()));
+    result = addressBow(emailAddresses);
+   
+  }
   catch(Exception e) {
     println("error loading email: " + e.toString());
   }
+  return result;
+}
+
+float[] addressBow(ArrayList<String> emailAddresses) {
+  float[] result = new float[allAddresses.size()];
+
+  for (int i = 0; i < allAddresses.size(); i++) {
+    if (emailAddresses.indexOf(allAddresses.get(i)) >= 0) {
+      result[i] = 1.0;
+    } 
+    else {
+      result[i] = 0.0;
+    }
+  }
+
   return result;
 }
 
@@ -52,58 +71,62 @@ ArrayList<String> addressesFromEmail(Email email) {
   return result;
 }
 
+void removeDuplicates(ArrayList<String> list) {
+  HashSet hs = new HashSet();
+  hs.addAll(list);
+  list.clear();
+  list.addAll(hs);
+}
+
 void setup() {
   size(800, 800);
-  Collection<File> files = FileUtils.listFiles(new java.io.File(dataPath("emails/cuilla-m")), FileFileFilter.FILE, DirectoryFileFilter.DIRECTORY);
+  Collection<File> files = FileUtils.listFiles(new java.io.File(dataPath(emailDirectory)), FileFileFilter.FILE, DirectoryFileFilter.DIRECTORY);
   println(files.size() + " emails found.");
 
-  train = new ArrayList<String[]>();
-  test = new ArrayList<String[]>();
+  train = new ArrayList<Sample>();
+  test = new ArrayList<Sample>();
 
   allAddresses = new ArrayList<String>();
 
   if (buildBags) {
-    int i = 0;
+    TextProgressBar progress = new TextProgressBar("Building BAG of WORDS", files.size());
+
     for (Iterator iter = files.iterator(); iter.hasNext();) {
-      println("Building BAG of WORDS: " + (i+1) + "/" +files.size());
-      i++;
+      progress.increment();
       java.io.File file = (java.io.File)iter.next();
       Email email = new Email(join(loadStrings(file.getPath()), "\n"));
       allAddresses.addAll(addressesFromEmail(email));
     }
   }
-  
-  if(saveBags){
+
+  removeDuplicates(allAddresses);
+  println("num addresses found: " + allAddresses.size());
+
+  if (saveBags) {
     String[] addressesCSV = allAddresses.toArray(new String[allAddresses.size()]);
-    saveStrings("bow/addresses.csv", addressesCSV);
+
+    saveStrings(dataPath("bow/addresses.csv"), addressesCSV);
   }
 
   for (Iterator iter = files.iterator(); iter.hasNext();) {
     java.io.File file = (java.io.File)iter.next();
     Email email = new Email(join(loadStrings(file.getPath()), "\n"));
 
+    // FIXME: for now label all samples as 1
     if (random(0, 1) < percentTrain) {
-      train.add(featureVectorFromEmail(email));
+      train.add(new Sample(featureVectorFromEmail(email), 1));
     } 
     else {
-      test.add(featureVectorFromEmail(email));
+      test.add(new Sample(featureVectorFromEmail(email), 1));
     }
   }
 
   println("Train: " + train.size() + " Test: " + test.size() + " percent: " + (float)train.size()/(test.size() + train.size()));
 
-  removeDuplicates(allAddresses);
-  println("num addresses found: " + allAddresses.size());
+
 
 
   //  textFont(loadFont("Helvetica-24.vlw"), 24);
-}
-
-void removeDuplicates(ArrayList<String> list) {
-  HashSet hs = new HashSet();
-  hs.addAll(list);
-  list.clear();
-  list.addAll(hs);
 }
 
 void draw() {

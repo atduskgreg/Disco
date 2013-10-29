@@ -13,11 +13,12 @@ import java.util.Iterator;
 import java.util.HashSet;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 
 String emailDirectory = "emails/cuilla-m";
 
-ArrayList<Sample> train;
-ArrayList<Sample> test;
+//ArrayList<Sample> train;
+//ArrayList<Sample> test;
 
 boolean buildBags = true;
 boolean saveBags = true;
@@ -37,7 +38,7 @@ float[] featureVectorFromEmail(Email email) {
     float[] addressBow = addressBow(emailAddresses);
     float scaledDate = scaledDate(email.getDate());
     System.arraycopy(addressBow, 0, result, 0, addressBow.length);
-    result[addressBow.length] = scaledDate; 
+    result[addressBow.length] = scaledDate;
   }
   catch(Exception e) {
     println("error loading email: " + e.toString());
@@ -51,7 +52,7 @@ float scaledDate(Date d) {
 
   long elapsedTime = d.getTime() - startDate.getTimeInMillis();
   long totalTime = endDate.getTimeInMillis() - startDate.getTimeInMillis();
-    
+
   return ((float)elapsedTime/(float)totalTime);
 }
 
@@ -98,9 +99,6 @@ void setup() {
   Collection<File> files = FileUtils.listFiles(new java.io.File(dataPath(emailDirectory)), FileFileFilter.FILE, DirectoryFileFilter.DIRECTORY);
   println(files.size() + " emails found.");
 
-  train = new ArrayList<Sample>();
-  test = new ArrayList<Sample>();
-
   allAddresses = new ArrayList<String>();
 
   if (buildBags) {
@@ -112,42 +110,121 @@ void setup() {
       Email email = new Email(join(loadStrings(file.getPath()), "\n"));
       allAddresses.addAll(addressesFromEmail(email));
     }
+    removeDuplicates(allAddresses);
   }
-
-  removeDuplicates(allAddresses);
 
   if (saveBags) {
+    println("save Bags of Words as csv files");
     String[] addressesCSV = allAddresses.toArray(new String[allAddresses.size()]);
-
     saveStrings(dataPath("bow/addresses.csv"), addressesCSV);
   }
-  
- 
+  println("\nLoad labels.\n");
+  HashMap<String, Integer> labelsForFiles = new HashMap<String, Integer>();
+  String[] labels = loadStrings("labels.csv");
+  for (int i = 0; i < labels.length; i++) {
+    String[] parts = split(labels[i], ",");
+    labelsForFiles.put(parts[1], int(parts[0]));
+  }
+
+  TextProgressBar progress = new TextProgressBar("Build samples", files.size());
+  Sample[] trainingSamples = new Sample[files.size()];
+  int i = 0;
+
   for (Iterator iter = files.iterator(); iter.hasNext();) {
     java.io.File file = (java.io.File)iter.next();
 
     Email email = new Email(join(loadStrings(file.getPath()), "\n"));
-
-    // FIXME: for now label all samples as 1
-    if (random(0, 1) < percentTrain) {
-      train.add(new Sample(featureVectorFromEmail(email), 1));
-    } 
-    else {
-      test.add(new Sample(featureVectorFromEmail(email), 1));
-    }
+//    print(file.getPath() + " > ");
+    int label = labelsForFiles.get(file.getPath());
+//    println(label);
+    
+    trainingSamples[i] = new Sample(featureVectorFromEmail(email), label);
+    i++;
+    
+    progress.increment();
   }
-  
-  println("num addresses found: " + allAddresses.size());
-  println("Train: " + train.size() + " Test: " + test.size() + " percent: " + (float)train.size()/(test.size() + train.size()));
 
-  OpenCV opencv = new OpenCV(this,0,0);
+  OpenCV opencv = new OpenCV(this, 0, 0);
 
-  classifier = new RandomForest(this);
-  classifier.addTrainingSamples(train);
-  classifier.train();
-  
+
+  HashMap<String, Float> averages = crossfold(3, trainingSamples);
+
+  println();
+  println("===Average Results===");
+  println("Accuracy: " + averages.get("accuracy"));
+  println("Precision: " + averages.get("precision"));
+  println("Recall: " + averages.get("recall"));
+  println("F-measure: " + averages.get("fmeasure"));
+
+
 
   //  textFont(loadFont("Helvetica-24.vlw"), 24);
+}
+
+
+HashMap crossfold(int nFolds, Sample[] samples) {
+  HashMap<String, Float> result = new HashMap<String, Float>();
+  result.put("accuracy", 0.0);
+  result.put("precision", 0.0);
+  result.put("recall", 0.0);
+  result.put("fmeasure", 0.0);
+
+  ArrayList<ArrayList<Sample>> folds = new ArrayList<ArrayList<Sample>>();
+  for (int i = 0; i < nFolds; i++) {
+    folds.add(new ArrayList<Sample>());
+  }
+
+  for (int i = 0; i < samples.length; i++) {
+    int fold = (int)random(0, nFolds);
+
+    folds.get(fold).add(samples[i]);
+  }
+
+  for (int i = 0; i < folds.size(); i++) {
+    ArrayList<Sample> testing = folds.get(i);
+    ArrayList<Sample> training = new ArrayList<Sample>();
+
+    for (int j = 0; j < folds.size(); j++) {
+      if (j != i) {
+        training.addAll(folds.get(j));
+      }
+    }
+
+    println();
+    println("Executing fold " + (i+1) + "...");
+    ClassificationResult score = executeFold(training, testing);
+
+    println("training size: " + training.size() + " testing size: " + testing.size());
+    result.put("accuracy", result.get("accuracy") + score.getAccuracy());
+    result.put("precision", result.get("precision") + score.getPrecision());
+    result.put("recall", result.get("recall") + score.getRecall());
+    result.put("fmeasure", result.get("fmeasure") + score.getFMeasure());
+  }
+
+  result.put("accuracy", result.get("accuracy")/nFolds);
+  result.put("precision", result.get("precision")/nFolds);
+  result.put("recall", result.get("recall")/nFolds);
+  result.put("fmeasure", result.get("fmeasure")/nFolds);
+
+  return result;
+}
+
+ClassificationResult executeFold(ArrayList<Sample> training, ArrayList<Sample> testing) {
+
+  ClassificationResult score = new ClassificationResult();
+
+  classifier = new RandomForest(this);
+  classifier.addTrainingSamples(training);
+  classifier.train();
+
+  for (Sample sample : testing) {
+    double prediction = classifier.predict(sample);
+    score.addResult((int)prediction == 1, (int)prediction == sample.label);
+  }
+
+  println("Accuracy: "+ score.getAccuracy() +" Precision: " + score.getPrecision() + " Recall: " + score.getRecall() + " F-measure: " + score.getFMeasure());
+
+  return score;
 }
 
 void draw() {

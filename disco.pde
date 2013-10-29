@@ -1,6 +1,5 @@
 import org.apache.commons.io.FileUtils;
 import gab.opencv.*;
-import gab.opencv.*;
 import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
@@ -26,6 +25,8 @@ boolean saveBags = true;
 ArrayList<String> allAddresses;
 
 float percentTrain = 0.3;
+
+RandomForest classifier;
 
 float[] featureVectorFromEmail(Email email) {
   float[] result = new float[allAddresses.size() + 1]; // vector size is number of email addresses plus one for the scaled-date
@@ -120,9 +121,11 @@ void setup() {
 
     saveStrings(dataPath("bow/addresses.csv"), addressesCSV);
   }
-
+  
+ 
   for (Iterator iter = files.iterator(); iter.hasNext();) {
     java.io.File file = (java.io.File)iter.next();
+
     Email email = new Email(join(loadStrings(file.getPath()), "\n"));
 
     // FIXME: for now label all samples as 1
@@ -133,11 +136,16 @@ void setup() {
       test.add(new Sample(featureVectorFromEmail(email), 1));
     }
   }
+  
   println("num addresses found: " + allAddresses.size());
   println("Train: " + train.size() + " Test: " + test.size() + " percent: " + (float)train.size()/(test.size() + train.size()));
 
+  OpenCV opencv = new OpenCV(this,0,0);
 
-
+  classifier = new RandomForest(this);
+  classifier.addTrainingSamples(train);
+  classifier.train();
+  
 
   //  textFont(loadFont("Helvetica-24.vlw"), 24);
 }

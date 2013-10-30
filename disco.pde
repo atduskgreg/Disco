@@ -16,15 +16,6 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import org.apache.commons.io.filefilter.*;
 
-//import org.apache.commons.io.filefilter.RegexFileFilter;
-
-//import edu.stanford.nlp.ling.CoreLabel;
-//import edu.stanford.nlp.ling.HasWord;
-//import edu.stanford.nlp.process.CoreLabelTokenFactory;
-//import edu.stanford.nlp.process.DocumentPreprocessor;
-//import edu.stanford.nlp.process.PTBTokenizer;
-//import edu.stanford.nlp.util.CoreMap;
-
 import java.util.Properties;
 import java.util.List;
 
@@ -140,11 +131,6 @@ void setup() {
   RegexFileFilter fileFilter = new RegexFileFilter("(.+)\\.$");
   Collection<File> files = FileUtils.listFiles(new java.io.File(dataPath(emailDirectory)), fileFilter, DirectoryFileFilter.DIRECTORY);
   println(files.size() + " emails found.");
-
-  //  println("Setup CoreNLP.");
-  //  Properties props = new Properties();
-  //  props.put("annotators", "tokenize, ssplit, pos, lemma, parse, ner, dcoref"); // , dcoref
-  //  pipeline = new StanfordCoreNLP(props);
 
   allAddresses = new ArrayList<String>();
   allEntities = new ArrayList<String>();

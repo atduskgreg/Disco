@@ -14,31 +14,44 @@ import java.util.HashSet;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
+import org.apache.commons.io.filefilter.*;
+
+//import org.apache.commons.io.filefilter.RegexFileFilter;
+
+//import edu.stanford.nlp.ling.CoreLabel;
+//import edu.stanford.nlp.ling.HasWord;
+//import edu.stanford.nlp.process.CoreLabelTokenFactory;
+//import edu.stanford.nlp.process.DocumentPreprocessor;
+//import edu.stanford.nlp.process.PTBTokenizer;
+//import edu.stanford.nlp.util.CoreMap;
+
+import java.util.Properties;
+import java.util.List;
 
 String emailDirectory = "emails/cuilla-m";
-
-//ArrayList<Sample> train;
-//ArrayList<Sample> test;
 
 boolean buildBags = true;
 boolean saveBags = true;
 
 ArrayList<String> allAddresses;
-
-float percentTrain = 0.3;
+ArrayList<String> allEntities;
 
 RandomForest classifier;
+//StanfordCoreNLP pipeline;
 
-float[] featureVectorFromEmail(Email email) {
-  float[] result = new float[allAddresses.size() + 1]; // vector size is number of email addresses plus one for the scaled-date
+float[] featureVectorFromEmail(Email email, File file) {
+  float[] result = new float[allAddresses.size() + allEntities.size() + 1]; // vector size is number of email addresses plus number of entities plus one for the scaled-date
   try {
     ArrayList<String> emailAddresses = new ArrayList<String>();
     emailAddresses.add(email.getFrom());
     emailAddresses.addAll(Arrays.asList(email.getRecipients()));
     float[] addressBow = addressBow(emailAddresses);
     float scaledDate = scaledDate(email.getDate());
+    float[] entitiesBow = entityBow(entitiesFromEmail(email, file));
     System.arraycopy(addressBow, 0, result, 0, addressBow.length);
-    result[addressBow.length] = scaledDate;
+    System.arraycopy(entitiesBow, addressBow.length, result, 0, entitiesBow.length);
+
+    result[result.length-1] = scaledDate;
   }
   catch(Exception e) {
     println("error loading email: " + e.toString());
@@ -54,6 +67,21 @@ float scaledDate(Date d) {
   long totalTime = endDate.getTimeInMillis() - startDate.getTimeInMillis();
 
   return ((float)elapsedTime/(float)totalTime);
+}
+
+float[] entityBow(ArrayList<String> emailEntities) {
+  float[] result = new float[allEntities.size()];
+
+  for (int i = 0; i < allEntities.size(); i++) {
+    if (emailEntities.indexOf(allAddresses.get(i)) >= 0) {
+      result[i] = 1.0;
+    } 
+    else {
+      result[i] = 0.0;
+    }
+  }
+
+  return result;
 }
 
 float[] addressBow(ArrayList<String> emailAddresses) {
@@ -87,6 +115,19 @@ ArrayList<String> addressesFromEmail(Email email) {
   return result;
 }
 
+ArrayList<String> entitiesFromEmail(Email email, File emailFile) {
+  ArrayList<String> result = new ArrayList<String>();
+  // read them from the csv
+  String entitiesCsv = emailFile.getParent() + "/entities/" + emailFile.getName() + "csv";
+  String[] lines = loadStrings(entitiesCsv);
+  for(int i = 0; i < lines.length; i++){
+    String[] parts = split(lines[i], ",");
+    result.add(parts[0]);  
+  }
+ 
+  return result;
+}
+
 void removeDuplicates(ArrayList<String> list) {
   HashSet hs = new HashSet();
   hs.addAll(list);
@@ -96,10 +137,17 @@ void removeDuplicates(ArrayList<String> list) {
 
 void setup() {
   size(800, 800);
-  Collection<File> files = FileUtils.listFiles(new java.io.File(dataPath(emailDirectory)), FileFileFilter.FILE, DirectoryFileFilter.DIRECTORY);
+  RegexFileFilter fileFilter = new RegexFileFilter("(.+)\\.$");
+  Collection<File> files = FileUtils.listFiles(new java.io.File(dataPath(emailDirectory)), fileFilter, DirectoryFileFilter.DIRECTORY);
   println(files.size() + " emails found.");
 
+  //  println("Setup CoreNLP.");
+  //  Properties props = new Properties();
+  //  props.put("annotators", "tokenize, ssplit, pos, lemma, parse, ner, dcoref"); // , dcoref
+  //  pipeline = new StanfordCoreNLP(props);
+
   allAddresses = new ArrayList<String>();
+  allEntities = new ArrayList<String>();
 
   if (buildBags) {
     TextProgressBar progress = new TextProgressBar("Building BAG of WORDS", files.size());
@@ -109,14 +157,21 @@ void setup() {
       java.io.File file = (java.io.File)iter.next();
       Email email = new Email(join(loadStrings(file.getPath()), "\n"));
       allAddresses.addAll(addressesFromEmail(email));
+      allEntities.addAll(entitiesFromEmail(email, file));
     }
     removeDuplicates(allAddresses);
+    print("Num Entities before de-dup: " + allEntities.size());
+    removeDuplicates(allEntities);
+    println(" and after: " + allEntities.size());
   }
 
   if (saveBags) {
     println("save Bags of Words as csv files");
     String[] addressesCSV = allAddresses.toArray(new String[allAddresses.size()]);
     saveStrings(dataPath("bow/addresses.csv"), addressesCSV);
+
+    String[] entitiesCSV = allEntities.toArray(new String[allEntities.size()]);
+    saveStrings(dataPath("bow/entities.csv"), entitiesCSV);
   }
   println("\nLoad labels.\n");
   HashMap<String, Integer> labelsForFiles = new HashMap<String, Integer>();
@@ -134,13 +189,12 @@ void setup() {
     java.io.File file = (java.io.File)iter.next();
 
     Email email = new Email(join(loadStrings(file.getPath()), "\n"));
-//    print(file.getPath() + " > ");
     int label = labelsForFiles.get(file.getPath());
-//    println(label);
-    
-    trainingSamples[i] = new Sample(featureVectorFromEmail(email), label);
+
+    trainingSamples[i] = new Sample(featureVectorFromEmail(email, file), label);
     i++;
-    
+
+
     progress.increment();
   }
 
@@ -219,6 +273,9 @@ ClassificationResult executeFold(ArrayList<Sample> training, ArrayList<Sample> t
 
   for (Sample sample : testing) {
     double prediction = classifier.predict(sample);
+    if (prediction == 1) {
+      println("WE PREDICTED AN EMAIL!");
+    }
     score.addResult((int)prediction == 1, (int)prediction == sample.label);
   }
 

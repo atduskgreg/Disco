@@ -5,33 +5,95 @@
     <link rel="stylesheet" href="/style/blueprint/print.css" type="text/css" media="print"><!--[if lt IE 8]><link rel="stylesheet" href="/style/blueprint/ie.css" type="text/css" media="screen, projection"><![endif]-->
     <style>
     	input {
-    		font-size: 16px;
+    		font-size: 24px;
     	}
-    	pre { white-space: pre-wrap;  }
+    	pre { 
+    		white-space: pre-wrap;  
+    		float: left;
+    	}
+    	h4 {
+    		float: left;
+    	}
+    	h3 {
+    		float: left;
+    	}
+
+    	.emailComponent {
+    		height: 100%;
+    		/*max-height: 20px;*/
+    		/*min-height: 20px;*/
+    		/*min-width: 50px;*/
+    		float: left;
+    		/*padding: 5px;*/
+    		padding-left: 5px;
+    		/*padding-right: 5px;*/
+    	}
+
+    	.email {
+    		float: left;
+    		height: 20px;
+    		 /*border-right: 1px solid #000;*/
+    		padding-bottom: 5px;
+    		padding-top: 5px;
+    	}
+
+    	.odd {
+    		border: 1px solid #ddd;
+    		border-left: none;
+    		border-right: none;
+
+    	}
+    	.subject {
+    		/*width: 200px;*/
+    		/*border-right: 1px solid #aaa;*/
+    		color: #000;
+    	}
+    	.body {
+    		width: 500px;
+    		    		/*border-right: 1px solid #aaa;*/
+    		    		color: #aaa;
+    		overflow: hidden;
+
+    	}
+    	.from {
+    		width: 250px;
+    		/*border-right: 1px solid #aaa;*/
+    	}
+
+    	.sent {
+    		width: 75px;
+    	}
+
+    	#search {
+    		background-color: #eef;
+    	}
     </style>
 
 	</head>
 	<body>
 		<div class="container">
-			<div id="search" class="span-14 append-5 last">
-				<form action="/" method="get">
-					<input type="text" size=60 name="q" value="<%= params["q"] %>" />
+			<div id="search" class="span-24 last">
+				<h1 class="span-1 prepend-1">D</h1>
+				<form action="/" method="get" class="span-16">
+					<input type="text" size=40 name="q" value="<%= params["q"] %>" />
 					<input type="submit" value="search" />
 				</form>
 			</div>
 			<div id="emails" class="span-24 last">
 				<div id="count">
-					<h2><%= @emails.length %> emails found</h2>
+					<h2><%= @emails.length %> messages found</h2>
 				</div>
-				<% @emails.each do |email| %>
-				<div class="email span-24 last">
-					<h3>Subject: <%= email.subject %></h3>
-					<h4>From: <%= email.from %></h4>
-					<h4>Sent: <%= email.sent_time %></h4>
+				<% @emails.each_with_index do |email, i| %>
+				<div class="email span-24 last <%= "odd" if i % 2 != 0 %>">
+				<h4 class="from emailComponent"><%= email.from %></h4>
+
+					<!-- <h4 class="subject emailComponent"><%= email.subject %></h3> -->
 			
-					<pre class="span-10">
-						<%= h email.body %>
-					</pre>
+					<p class="body emailComponent">
+						<span class="subject"><%= email.subject %></span> - <%= h email.body[0..60].gsub(/\n/, '') %>...
+					</p>
+					<h4 class="sent emailComponent"><%= email.sent_time %></h4>
+
 				</div>		
 				<% end %>
 

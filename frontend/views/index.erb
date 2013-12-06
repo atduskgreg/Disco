@@ -1,0 +1,41 @@
+<html>
+<head>
+		<title>Disco - Discover System</title>
+<link rel="stylesheet" href="/style/blueprint/screen.css" type="text/css" media="screen, projection">
+    <link rel="stylesheet" href="/style/blueprint/print.css" type="text/css" media="print"><!--[if lt IE 8]><link rel="stylesheet" href="/style/blueprint/ie.css" type="text/css" media="screen, projection"><![endif]-->
+    <style>
+    	input {
+    		font-size: 16px;
+    	}
+    	pre { white-space: pre-wrap;  }
+    </style>
+
+	</head>
+	<body>
+		<div class="container">
+			<div id="search" class="span-14 append-5 last">
+				<form action="/" method="get">
+					<input type="text" size=60 name="q" value="<%= params["q"] %>" />
+					<input type="submit" value="search" />
+				</form>
+			</div>
+			<div id="emails" class="span-24 last">
+				<div id="count">
+					<h2><%= @emails.length %> emails found</h2>
+				</div>
+				<% @emails.each do |email| %>
+				<div class="email span-24 last">
+					<h3>Subject: <%= email.subject %></h3>
+					<h4>From: <%= email.from %></h4>
+					<h4>Sent: <%= email.sent_time %></h4>
+			
+					<pre class="span-10">
+						<%= h email.body %>
+					</pre>
+				</div>		
+				<% end %>
+
+			</div>
+		</div>
+	</body>
+</html>

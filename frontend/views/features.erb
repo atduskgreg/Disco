@@ -24,7 +24,13 @@
 	</div>
 <% @features.each_with_index do |feature,i| %>
 	<div class="item span-24 last <%= "odd" if i % 2 != 0 %>">
-	<h4 class="featureText itemComponent"><%= feature.feature %></h4>
+	<h4 class="featureText itemComponent">
+		<% if feature.feature_type == "string" %> 
+		<a href="/?q=<%= feature.feature.gsub("_", "%20") %>"><%= feature.feature %></a>
+		<% else %>
+		<%= feature.feature %>
+		<% end %>
+	</h4>
 	<h4 class="featueWeight itemComponent"><%= feature.weight %></h4>
 	<h4 class="featureType itemComponent"><%= feature.feature_type %></h4>
 

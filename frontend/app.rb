@@ -11,7 +11,7 @@ end
 get "/" do
 	if params.keys.include? "q"
 		puts "searching"
-		@emails = Email.all(:subject.like => "%#{params["q"]}%")
+		@emails = Email.all(:subject.like => "%#{params["q"]}%") + Email.all(:body.like => "%#{params["q"]}%")
 	else 
 		@emails = Email.all
 	end

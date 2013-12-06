@@ -1,0 +1,33 @@
+<div id="search" class="span-24 last">
+	<h1 class="span-1 prepend-1">D</h1>
+	<form action="/features" method="get" class="span-16">
+		<select name="sort">
+			<option value="desc">Positive correlation</option>
+			<option <% if params["sort"] == "asc" %>selected="true"<% end %> value="asc">Negative correlation</option>
+		</select>
+		<input type="submit" value="sort" />
+	</form>
+	
+</div>
+<div id="features" class="span-24">
+	<div id="count">
+		<h2><%= params["sort"] == "asc" ? "Bottom" : "Top" %> <%= @features.length %> features</h2>
+	</div>
+	<div id="explain" class="span-24">
+	<p>
+		<% if params["sort"] == "asc" %>
+		These are the features which most strongly indicate that a message is <b>not</b> relevant based on the current classifier.
+		<% else %>
+		These are the features which most strongly indicate that a message <b>is</b> relevant based on the current classifier.
+		<% end %>
+	</p>
+	</div>
+<% @features.each_with_index do |feature,i| %>
+	<div class="item span-24 last <%= "odd" if i % 2 != 0 %>">
+	<h4 class="featureText itemComponent"><%= feature.feature %></h4>
+	<h4 class="featueWeight itemComponent"><%= feature.weight %></h4>
+	<h4 class="featureType itemComponent"><%= feature.feature_type %></h4>
+
+	</div>
+<% end %>
+</div>

@@ -9,8 +9,6 @@ helpers do
 end
 
 get "/" do
-			puts params.inspect
-
 	if params.keys.include? "q"
 		puts "searching"
 		@emails = Email.all(:subject.like => "%#{params["q"]}%")
@@ -19,4 +17,14 @@ get "/" do
 	end
 	
 	erb :index
+end
+
+get "/features" do
+	if params["sort"] == "asc"
+		puts "asc"
+		@features = Feature.all(:order => [:weight.asc], :limit => 100)
+	else 
+		@features = Feature.all(:order => [:weight.desc], :limit => 100)
+	end
+	erb :features
 end

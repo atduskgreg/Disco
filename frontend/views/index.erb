@@ -1,103 +1,36 @@
-<html>
-<head>
-		<title>Disco - Discover System</title>
-<link rel="stylesheet" href="/style/blueprint/screen.css" type="text/css" media="screen, projection">
-    <link rel="stylesheet" href="/style/blueprint/print.css" type="text/css" media="print"><!--[if lt IE 8]><link rel="stylesheet" href="/style/blueprint/ie.css" type="text/css" media="screen, projection"><![endif]-->
-    <style>
-    	input {
-    		font-size: 24px;
-    	}
-    	pre { 
-    		white-space: pre-wrap;  
-    		float: left;
-    	}
-    	h4 {
-    		float: left;
-    	}
-    	h3 {
-    		float: left;
-    	}
+<div id="search" class="span-24 last">
+	<h1 class="span-1 prepend-1">D</h1>
+	<form action="/" method="get" class="span-16">
+		<input type="text" size=40 name="q" value="<%= params["q"] %>" />
+		<input type="submit" value="search" />
+	</form>
+</div>
+<div id="emails" class="span-24 last">
+	<div id="count">
+		<h2><%= @emails.length %> messages found</h2>
+	</div>
+	<div id="explain" class="span-24">
+	<p>
+		<% if params["q"] %>
+		These are the messages that match your query: <b><%= params["q"] %></b>.
+		<% else %>
+		Showing all messages.
+		<% end %>
+	</p>
 
-    	.emailComponent {
-    		height: 100%;
-    		/*max-height: 20px;*/
-    		/*min-height: 20px;*/
-    		/*min-width: 50px;*/
-    		float: left;
-    		/*padding: 5px;*/
-    		padding-left: 5px;
-    		/*padding-right: 5px;*/
-    	}
+</div>
+	<% @emails.each_with_index do |email, i| %>
+	<div class="item span-24 last <%= "odd" if i % 2 != 0 %>">
+	<h4 class="from itemComponent"><%= email.from %></h4>
 
-    	.email {
-    		float: left;
-    		height: 20px;
-    		 /*border-right: 1px solid #000;*/
-    		padding-bottom: 5px;
-    		padding-top: 5px;
-    	}
+		<!-- <h4 class="subject emailComponent"><%= email.subject %></h3> -->
 
-    	.odd {
-    		border: 1px solid #ddd;
-    		border-left: none;
-    		border-right: none;
+		<p class="body itemComponent">
+			<span class="subject"><%= email.subject %></span> - <%= h email.body[0..60].gsub(/\n/, '') %>...
+		</p>
+		<h4 class="sent itemComponent"><%= email.sent_time %></h4>
 
-    	}
-    	.subject {
-    		/*width: 200px;*/
-    		/*border-right: 1px solid #aaa;*/
-    		color: #000;
-    	}
-    	.body {
-    		width: 500px;
-    		    		/*border-right: 1px solid #aaa;*/
-    		    		color: #aaa;
-    		overflow: hidden;
+	</div>		
+	<% end %>
 
-    	}
-    	.from {
-    		width: 250px;
-    		/*border-right: 1px solid #aaa;*/
-    	}
-
-    	.sent {
-    		width: 75px;
-    	}
-
-    	#search {
-    		background-color: #eef;
-    	}
-    </style>
-
-	</head>
-	<body>
-		<div class="container">
-			<div id="search" class="span-24 last">
-				<h1 class="span-1 prepend-1">D</h1>
-				<form action="/" method="get" class="span-16">
-					<input type="text" size=40 name="q" value="<%= params["q"] %>" />
-					<input type="submit" value="search" />
-				</form>
-			</div>
-			<div id="emails" class="span-24 last">
-				<div id="count">
-					<h2><%= @emails.length %> messages found</h2>
-				</div>
-				<% @emails.each_with_index do |email, i| %>
-				<div class="email span-24 last <%= "odd" if i % 2 != 0 %>">
-				<h4 class="from emailComponent"><%= email.from %></h4>
-
-					<!-- <h4 class="subject emailComponent"><%= email.subject %></h3> -->
-			
-					<p class="body emailComponent">
-						<span class="subject"><%= email.subject %></span> - <%= h email.body[0..60].gsub(/\n/, '') %>...
-					</p>
-					<h4 class="sent emailComponent"><%= email.sent_time %></h4>
-
-				</div>		
-				<% end %>
-
-			</div>
-		</div>
-	</body>
-</html>
+</div>

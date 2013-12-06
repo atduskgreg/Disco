@@ -1,0 +1,114 @@
+<html>
+<head>
+		<title>Disco - Discovery System</title>
+<link rel="stylesheet" href="/style/blueprint/screen.css" type="text/css" media="screen, projection">
+    <link rel="stylesheet" href="/style/blueprint/print.css" type="text/css" media="print"><!--[if lt IE 8]><link rel="stylesheet" href="/style/blueprint/ie.css" type="text/css" media="screen, projection"><![endif]-->
+    <style>
+    	input {
+    		font-size: 24px;
+    	}
+    	pre { 
+    		white-space: pre-wrap;  
+    		float: left;
+    	}
+    	h4 {
+    		float: left;
+    	}
+    	h3 {
+    		float: left;
+    	}
+
+    	.itemComponent {
+    		height: 100%;
+    		/*max-height: 20px;*/
+    		/*min-height: 20px;*/
+    		/*min-width: 50px;*/
+    		float: left;
+    		/*padding: 5px;*/
+    		padding-left: 5px;
+    		/*padding-right: 5px;*/
+    	}
+
+    	.item {
+    		float: left;
+    		height: 20px;
+    		 /*border-right: 1px solid #000;*/
+    		padding-bottom: 5px;
+    		padding-top: 5px;
+    	}
+
+    	.odd {
+    		border: 1px solid #ddd;
+    		border-left: none;
+    		border-right: none;
+
+    	}
+    	.subject {
+    		/*width: 200px;*/
+    		/*border-right: 1px solid #aaa;*/
+    		color: #000;
+    	}
+    	.body {
+    		width: 500px;
+    		    		/*border-right: 1px solid #aaa;*/
+    		    		color: #aaa;
+    		overflow: hidden;
+
+    	}
+    	.from {
+    		width: 250px;
+    		/*border-right: 1px solid #aaa;*/
+    	}
+
+    	.sent {
+    		width: 75px;
+    	}
+
+    	#search {
+    		background-color: #eef;
+    	}
+
+        .featureText{
+            width: 200px;
+        }
+        .featueWeight{
+            width: 200px;
+
+        }
+        .featureType{
+                        width: 200px;
+        }
+
+        #explain {
+            font-style: italic;
+            /*color: #faa;*/
+            /*padding: 5px;*/
+            font-size: 1.2em;
+            border-bottom: 1px solid #aaa;
+
+        }
+
+        #explain b {
+                        color: #f00;
+        }
+        #count h2 {
+            margin-bottom: 0;
+        }
+    </style>
+
+	</head>
+	<body>
+<div class="container">
+    <div id="nav" class="span-24">
+        <div class="nav span-2">
+            <a href="/">Emails</a>
+        </div>
+        <div class="nav span-2">
+            <a href="/features">Features</a>
+        </div>
+    </div>
+        <%= yield %>
+        </div>
+    </body>
+</html>
+

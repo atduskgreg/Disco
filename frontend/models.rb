@@ -14,4 +14,14 @@ class Email
   property :sent_time, Float
 end
 
+class Feature
+  include DataMapper::Resource
+
+  property :id, Serial
+  property :feature, Text
+  property :feature_type, String
+  property :weight, Float
+
+end
+
 DataMapper.finalize

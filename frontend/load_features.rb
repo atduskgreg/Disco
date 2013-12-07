@@ -15,6 +15,14 @@ s.split(/\n/).collect{|line| line.split(",")}.each do |row|
 		feature.feature_type = "column"
 		feature.feature = row[0].split("__")[0]
 	end
+	if row[0] =~ /_subject$/
+		feature.feature_type = "subject"
+		feature.feature = row[0].split("_subject")[0]
+	end
+	if row[0] =~ /_body$/
+		feature.feature_type = "body"
+		feature.feature = row[0].split("_body")[0]
+	end
 	if row[0] =~ /__rx/
 		feature.feature_type = "regex"
 		feature.feature = row[0].split("__")[0]

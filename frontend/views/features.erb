@@ -1,6 +1,7 @@
-<div id="search" class="span-24 last">
-	<h1 class="span-1 prepend-1">D</h1>
-	<form action="/features" method="get" class="span-16">
+
+<div id="search" class="span-19 last">
+
+	<form id="featureForm" action="/features" method="get" class="span-16">
 		<select name="sort">
 			<option value="desc">Positive correlation</option>
 			<option <% if params["sort"] == "asc" %>selected="true"<% end %> value="asc">Negative correlation</option>
@@ -27,6 +28,8 @@
 	<h4 class="featureText itemComponent">
 		<% if feature.feature_type == "string" %> 
 		<a href="/?q=<%= feature.feature.gsub("_", "%20") %>"><%= feature.feature %></a>
+		<% elsif feature.feature_type == "subject" || feature.feature_type == "body"%>
+			<a href="/?q=<%= feature.feature.gsub("_", "%20") %>&field=<%= feature.feature_type %>"><%= feature.feature %></a>
 		<% else %>
 		<%= feature.feature %>
 		<% end %>

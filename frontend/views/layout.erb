@@ -18,6 +18,14 @@
     		float: left;
     	}
 
+        form {
+            padding-left: 10px;
+            height: 60px;
+        }
+
+        #featureForm select {
+            font-size: 32px;
+        }
     	.itemComponent {
     		height: 100%;
     		/*max-height: 20px;*/
@@ -69,6 +77,7 @@
 
     	#search {
     		background-color: #eef;
+            margin-bottom: 25px;
     	}
 
         .featureText{
@@ -94,6 +103,7 @@
         #explain b {
                         color: #f00;
         }
+
         #count h2 {
             margin-bottom: 0;
         }
@@ -102,14 +112,19 @@
 	</head>
 	<body>
 <div class="container">
+    
     <div id="nav" class="span-24">
-        <div class="nav span-2">
+        
+        <div class="nav prepend-5 span-2">
             <a href="/">Emails</a>
         </div>
         <div class="nav span-2">
             <a href="/features">Features</a>
         </div>
     </div>
+    <div class="span-5 ">
+            <img src="/images/logo.png" class="span-4" />
+        </div>
         <%= yield %>
         </div>
     </body>

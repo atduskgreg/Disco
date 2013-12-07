@@ -25,7 +25,7 @@
 		<!-- <h4 class="subject emailComponent"><%= email.subject %></h3> -->
 
 		<p class="body itemComponent">
-			<span class="subject"><%= email.subject %></span> - <%= h email.body[0..60].gsub(/\n/, '') %>...
+			<span class="subject"><%= email.subject %></span> - <span class="emailToggle emailSummary"><%= h email.body[0..60].gsub(/\n/, '') %>...</span><span class="emailToggle emailFull" style="whitespace:pre; display:none"><%= h email.body %></span>
 		</p>
 		<h4 class="sent itemComponent"><%= email.sent_time %></h4>
 

@@ -109,24 +109,48 @@
         }
     </style>
 
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script>
+    function ready(){
+        $(".emailToggle").click(function(e){
+            element = $(e.target);
+            console.log(element.css("overflow"));
+            if(element.parent().css("overflow") == "visible" ){
+                element.parent().css("overflow", "hidden");
+            } else {
+               element.css("overflow", "visible");
+            }
+
+         $($(".emailToggle")[0]).parent().css("overflow", "visible")
+         $($(".emailToggle")[0]).parent().children(".emailToggle").toggle()
+         if($($(".emailToggle")[0]).parent().parent().css("height") == "auto"){
+            $($(".emailToggle")[0]).parent().parent().css("height", "20px");
+         } else {
+             $($(".emailToggle")[0]).parent().parent().css("height", "auto");
+         }
+            return false;
+        });
+    }
+
+    document.addEventListener("DOMContentLoaded", ready, false);
+
+    </script>
 	</head>
 	<body>
-<div class="container">
-    
-    <div id="nav" class="span-24">
-        
-        <div class="nav prepend-5 span-2">
-            <a href="/">Emails</a>
+    <div class="container">
+        <div id="nav" class="span-24">
+            <div class="nav prepend-5 span-2">
+                <a href="/">Emails</a>
+            </div>
+            <div class="nav span-2">
+                <a href="/features">Features</a>
+            </div>
         </div>
-        <div class="nav span-2">
-            <a href="/features">Features</a>
-        </div>
-    </div>
-    <div class="span-5 ">
+        <div class="span-5 ">
             <img src="/images/logo.png" class="span-4" />
         </div>
         <%= yield %>
-        </div>
+    </div>
     </body>
 </html>
 

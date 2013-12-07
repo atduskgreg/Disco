@@ -4,11 +4,23 @@
 		<input type="submit" value="search" />
 	</form>
 </div>
-<div id="emails" class="span-24 last">
+<div id="sidebar" class="span-4">
+	<h3>Relevant</h3>	
+	<% @relevant.each do |email| %>
+		<p><b class="span-2"><%= email.subject %></b><span style="text-align:right" class="span-1"><%= email.sent_time %></span><br />
+			<%= email.from %><br />
+			<em><%= h email.body[0..60].gsub(/\n/, '') %>...</em>
+
+		</p>
+		
+	<% end %>
+
+</div>
+<div id="emails" class="span-19 last">
 	<div id="count">
 		<h2><%= @emails.length %> messages found</h2>
 	</div>
-	<div id="explain" class="span-24">
+	<div id="explain" class="span-21">
 	<p>
 		<% if params["q"] %>
 		These are the messages that match your query: <b><%= params["q"] %></b>.
@@ -16,10 +28,9 @@
 		Showing all messages.
 		<% end %>
 	</p>
-
-</div>
+	</div>
 	<% @emails.each_with_index do |email, i| %>
-	<div class="item span-24 last <%= "odd" if i % 2 != 0 %>">
+	<div class="item span-21 last <%= "odd" if i % 2 != 0 %>">
 		<form class="labelForm itemComponent span-2" action="/emails/<%= email.id %>/labels" method="POST">
 			<input <% if email.label && email.label.relevant == 1 %>class="selectedLabel"<% end %> type="submit" value="relevant" name="relevant"  /><br />
 			<input <% if email.label && email.label.relevant == 0 %>class="selectedLabel"<% end %> type="submit" value="irrelevant" name="relevant"  />

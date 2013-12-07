@@ -25,6 +25,8 @@ get "/" do
 	else 
 		@emails = Email.all
 	end
+
+	@relevant = Label.all(:relevant => 1).collect{|label| label.email}
 	
 	erb :emails
 end

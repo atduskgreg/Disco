@@ -14,9 +14,9 @@
     	h4 {
     		float: left;
     	}
-    	h3 {
+    	/*h3 {
     		float: left;
-    	}
+    	}*/
 
         form {
             padding-left: 10px;
@@ -58,7 +58,7 @@
     		color: #000;
     	}
     	.body {
-    		width: 500px;
+    		width: 400px;
     		    		/*border-right: 1px solid #aaa;*/
     		    		color: #aaa;
     		overflow: hidden;
@@ -125,6 +125,10 @@
         input.selectedLabel {
             background: #ef2;
         }
+
+        #logo {
+            margin-bottom:25px;
+        }
     </style>
 
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
@@ -164,7 +168,7 @@
                 <a href="/features">Features</a>
             </div>
         </div>
-        <div class="span-5 ">
+        <div id="logo" class="span-5 ">
             <img src="/images/logo.png" class="span-4" />
         </div>
         <%= yield %>

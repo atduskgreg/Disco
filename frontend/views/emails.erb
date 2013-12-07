@@ -20,6 +20,11 @@
 </div>
 	<% @emails.each_with_index do |email, i| %>
 	<div class="item span-24 last <%= "odd" if i % 2 != 0 %>">
+		<form class="labelForm itemComponent" action="/emails/<%= email.id %>/labels" method="POST">
+			<input <% if email.label && email.label.relevant == 1 %>class="selectedLabel"<% end %> type="submit" value="relevant" name="relevant"  />
+			<input <% if email.label && email.label.relevant == 0 %>class="selectedLabel"<% end %> type="submit" value="irrelevant" name="relevant"  />
+
+		</form>
 	<h4 class="from itemComponent"><%= email.from %></h4>
 
 		<!-- <h4 class="subject emailComponent"><%= email.subject %></h3> -->

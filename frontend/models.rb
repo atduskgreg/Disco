@@ -13,6 +13,15 @@ class Email
   property :sent_time, Float
 
   has 1, :label
+
+  def assign_label relevant
+    if self.label
+      self.label.relevant = relevant
+      self.label.save
+    else
+      Label.create :email => self, :relevant => relevant
+    end
+  end
 end
 
 class Feature

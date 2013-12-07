@@ -1,6 +1,7 @@
 require 'sinatra'
 require './models'
 require 'rack'
+require 'json'
 
 helpers do
   def h(text)
@@ -25,7 +26,7 @@ get "/" do
 		@emails = Email.all
 	end
 	
-	erb :index
+	erb :emails
 end
 
 get "/features" do
@@ -37,3 +38,15 @@ get "/features" do
 	end
 	erb :features
 end
+
+post "/emails/:email_id/labels" do
+	# content_type :json
+
+	relevant = params[:relevant] == "relevant" ? 1 : 0
+
+	email = Email.get params[:email_id]
+	email.assign_label relevant
+	redirect back
+	# {:email => {:id => email.id}, :label => {:id => email.label.id, :relevant => email.label.relevant}}.to_json
+end
+

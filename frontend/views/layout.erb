@@ -35,11 +35,12 @@
     		/*padding: 5px;*/
     		padding-left: 5px;
     		/*padding-right: 5px;*/
+            margin-top: 15px;
     	}
 
     	.item {
     		float: left;
-    		height: 20px;
+    		height: 50px;
     		 /*border-right: 1px solid #000;*/
     		padding-bottom: 5px;
     		padding-top: 5px;
@@ -61,10 +62,11 @@
     		    		/*border-right: 1px solid #aaa;*/
     		    		color: #aaa;
     		overflow: hidden;
+            margin-right: 15px;
 
     	}
     	.from {
-    		width: 250px;
+    		width: 200px;
     		/*border-right: 1px solid #aaa;*/
                         overflow: hidden;
                         margin-right: 10px;
@@ -107,12 +109,21 @@
         #count h2 {
             margin-bottom: 0;
         }
+        .labelForm {
+            margin-right: 20px;
+            margin-top: 0;
+        }
 
         .labelForm input {
             font-size: 12px;
+            min-width: 70px;
+            background-color: #eee;
+            border: none;
         }
-        .selectedLabel {
-            background-color: #ef2;
+
+
+        input.selectedLabel {
+            background: #ef2;
         }
     </style>
 
@@ -131,7 +142,7 @@
          $($(".emailToggle")[0]).parent().css("overflow", "visible")
          $($(".emailToggle")[0]).parent().children(".emailToggle").toggle()
          if($($(".emailToggle")[0]).parent().parent().css("height") == "auto"){
-            $($(".emailToggle")[0]).parent().parent().css("height", "20px");
+            $($(".emailToggle")[0]).parent().parent().css("height", "50px");
          } else {
              $($(".emailToggle")[0]).parent().parent().css("height", "auto");
          }

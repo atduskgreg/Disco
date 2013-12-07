@@ -17,7 +17,7 @@ class Email
   def assign_label relevant
     if self.label
       self.label.relevant = relevant
-      self.label.save
+      puts self.label.save
     else
       Label.create :email => self, :relevant => relevant
     end

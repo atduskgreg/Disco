@@ -1,0 +1,15 @@
+<h3>Labeled</h3>
+<div id="sidebarNavLinks">
+<a href="#" class="sidebarNavLink releLink" id="relevant-link">Relevant</a>	 
+<a href="#" class="sidebarNavLink irreleLink disabledLink" id="irrelevant-link">Irrelevant</a>
+</div>
+<div class="sidebarList span-4" id="relevant">	
+<% @relevant.each do |email| %>
+	<%= partial(:sidebar_item, :locals => {:email => email}) %>
+<% end %>
+</div>
+<div class="sidebarList span-4" id="irrelevant" style="display:none">
+	<% @irrelevant.each do |email| %>
+		<%= partial(:sidebar_item, :locals => {:email => email}) %>
+	<% end %>
+</div>

@@ -121,6 +121,26 @@
             border: none;
         }
 
+        #sidebar {
+            margin-top: 60px;
+        }
+        #sidebar h3 {
+            border-bottom: 1px solid #aaa;
+            margin-bottom: 0;
+        }
+        #sidebar input {
+            background-color: #eee;
+            border:none;
+            font-size: 8px;
+        }
+        #sidebar form{
+            /*float:right;*/
+            float:right;
+            height: auto;
+            padding:0;
+            padding-right: 5px;
+        }
+
 
         input.selectedLabel {
             background: #ef2;
@@ -128,6 +148,40 @@
 
         #logo {
             margin-bottom:25px;
+        }
+
+        .relevant {
+            margin-bottom: 20px;
+        }
+
+        #sidebarNavLinks a {
+            text-decoration: none;
+            /*display:inline;*/
+            color: #fff;
+            display:block;
+            float:left;
+            width: 50%;
+            text-align: center;
+
+        }
+
+        #sidebarNavLinks {
+            margin-bottom: 35px;
+        }
+       
+        .releLink {
+            background-color: #0f0;
+        }
+
+        .irreleLink {
+            background-color: #f00;
+        }
+        .disabledLink {
+            background-color: #aaa;
+        }
+
+        .deselected {
+            background-color: #aaa;
         }
     </style>
 
@@ -152,6 +206,22 @@
          }
             return false;
         });
+
+        $(".sidebarNavLink").click(function(e){
+            link = $(e.target);
+            $(".sidebarNavLink").addClass("disabledLink");
+            link.removeClass("disabledLink");
+
+            whichDiv = $("#" + link.attr('id').split("-")[0]);
+
+            $(".sidebarList").hide();
+            whichDiv.show();
+
+            
+
+
+            return false;
+        })
     }
 
     document.addEventListener("DOMContentLoaded", ready, false);

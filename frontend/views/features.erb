@@ -10,7 +10,10 @@
 	</form>
 	
 </div>
-<div id="features" class="span-24">
+<div id="sidebar" class="span-4">
+	<%= erb :sidebar %>
+</div>
+<div id="features" class="span-19 push-1 last">
 	<div id="count">
 		<h2><%= params["sort"] == "asc" ? "Bottom" : "Top" %> <%= @features.length %> features</h2>
 	</div>

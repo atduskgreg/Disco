@@ -5,18 +5,9 @@
 	</form>
 </div>
 <div id="sidebar" class="span-4">
-	<h3>Relevant</h3>	
-	<% @relevant.each do |email| %>
-		<p><b class="span-2"><%= email.subject %></b><span style="text-align:right" class="span-1"><%= email.sent_time %></span><br />
-			<%= email.from %><br />
-			<em><%= h email.body[0..60].gsub(/\n/, '') %>...</em>
-
-		</p>
-		
-	<% end %>
-
+	<%= erb :sidebar %>
 </div>
-<div id="emails" class="span-19 last">
+<div id="emails" class="span-19 push-1 last">
 	<div id="count">
 		<h2><%= @emails.length %> messages found</h2>
 	</div>

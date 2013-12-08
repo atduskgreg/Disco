@@ -1,7 +1,7 @@
 <h3>Labeled</h3>
 <div id="sidebarNavLinks">
-<a href="#" class="sidebarNavLink releLink" id="relevant-link">Relevant</a>	 
-<a href="#" class="sidebarNavLink irreleLink disabledLink" id="irrelevant-link">Irrelevant</a>
+<a href="#" class="sidebarNavLink releLink" id="relevant-link">Relevant (<%= @relevant.length %>)</a>	 
+<a href="#" class="sidebarNavLink irreleLink disabledLink" id="irrelevant-link">Irrelevant (<%= @irrelevant.length %>)</a>
 </div>
 <div class="sidebarList span-4" id="relevant">	
 <% @relevant.each do |email| %>

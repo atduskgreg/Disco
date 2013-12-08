@@ -13,6 +13,7 @@ class Email
   property :sent_time, Float
 
   has 1, :label
+  has 1, :prediction
 
   def assign_label relevant
     if self.label
@@ -41,6 +42,15 @@ class Label
     property :relevant, Integer
 
     belongs_to :email
+end
+
+class Prediction
+  include DataMapper::Resource
+
+  property :id, Serial
+  property :relevant, Integer
+
+  belongs_to :email
 end
 
 DataMapper.finalize

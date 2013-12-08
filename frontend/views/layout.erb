@@ -27,7 +27,7 @@
             font-size: 32px;
         }
     	.itemComponent {
-    		height: 100%;
+    		/*height: 100%;*/
     		/*max-height: 20px;*/
     		/*min-height: 20px;*/
     		/*min-width: 50px;*/
@@ -183,6 +183,14 @@
         .deselected {
             background-color: #aaa;
         }
+
+        .autoHeight {
+            height: auto;
+        }
+
+        .emailFull {
+            white-space: pre-wrap;
+        }
     </style>
 
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
@@ -197,13 +205,11 @@
                element.css("overflow", "visible");
             }
 
-         $($(".emailToggle")[0]).parent().css("overflow", "visible")
-         $($(".emailToggle")[0]).parent().children(".emailToggle").toggle()
-         if($($(".emailToggle")[0]).parent().parent().css("height") == "auto"){
-            $($(".emailToggle")[0]).parent().parent().css("height", "50px");
-         } else {
-             $($(".emailToggle")[0]).parent().parent().css("height", "auto");
-         }
+         element.parent().css("overflow", "visible");
+         element.parent().children(".emailToggle").toggle();
+         element.parent().parent().toggleClass("autoHeight");
+
+        
             return false;
         });
 

@@ -2,7 +2,7 @@ require 'csv'
 require './models'
 
 CSV.foreach("cuilla_data.csv") do |row|
-	#label,time,from,subject,body
+# label,time,from,subject,body	
 	Email.create(
 		#:label => row[0],
 		:sent_time => row[1].to_f,

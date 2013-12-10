@@ -24,6 +24,14 @@ class Email
       Label.create :email => self, :relevant => relevant
     end
   end
+
+  def labeled_irrelevant?
+    if !self.label
+      false
+    else
+      self.label.relevant == 0
+    end
+  end
 end
 
 class Feature

@@ -21,7 +21,7 @@
 	</p>
 	</div>
 	<% @emails.each_with_index do |email, i| %>
-	<div class="item span-21 last <%= "odd" if i % 2 != 0 %>">
+	<div class="<%= "relevant" if (email.prediction.relevant == 1 && !email.labeled_irrelevant?) %> item span-21 last <%= "odd" if i % 2 != 0 %>">
 		<form class="labelForm itemComponent span-2" action="/emails/<%= email.id %>/labels" method="POST">
 			<input <% if email.label && email.label.relevant == 1 %>class="selectedLabel"<% end %> type="submit" value="relevant" name="relevant"  /><br />
 			<input <% if email.label && email.label.relevant == 0 %>class="selectedLabel"<% end %> type="submit" value="irrelevant" name="relevant"  />

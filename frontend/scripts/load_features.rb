@@ -1,7 +1,7 @@
 require 'csv'
-require './models'
+require "#{File.expand_path(File.dirname(__FILE__))}/../models.rb"
 
-s = open("positive_feature_table.csv").read
+s = open("#{File.expand_path(File.dirname(__FILE__))}/../data/positive_feature_table.csv").read
 s.force_encoding("UTF-8")
 
 s.split(/\n/).collect{|line| line.split(",")}.each do |row|

@@ -11,6 +11,7 @@ class Email
   property :body, Text
   property :from, Text
   property :sent_time, Float
+  property :uuid, String
 
   has 1, :label
   has 1, :prediction

@@ -1,22 +1,30 @@
 <div id="search" class="span-19 last">
-	<form action="/" method="get" class="span-16">
-		<input type="text" size=40 name="q" value="<%= params["q"] %>" />
-		<input type="submit" value="search" />
+
+	<form id="featureForm" action="/predictions" method="get" class="span-16">
+		<select name="relevant">
+			<option value="1">Predicted Relevant (<%= @relevant.length %>)</option>
+			<option <% if params["relevant"] == "0" %>selected="true"<% end %> value="0">Predicted Irrelevant (<%= @irrelevant.length %>)</option>
+		</select>
+		<input type="submit" value="show" />
 	</form>
 </div>
+
 <div id="sidebar" class="span-4">
-	<%= erb :sidebar, :locals => {:relevant => @relevant, :irrelevant => @irrelevant} %>
+	<%= erb :sidebar, :locals => {:relevant => @labeled_relevant, :irrelevant => @labeled_irrelevant} %>
 </div>
+
+<% @emails = (params["relevant"] && params["relevant"] == "0" ? @irrelevant : @relevant ) %>
+
 <div id="emails" class="span-19 push-1 last">
 	<div id="count">
 		<h2><%= @emails.length %> messages found</h2>
 	</div>
 	<div id="explain" class="span-21">
 	<p>
-		<% if params["q"] %>
-		These are the messages that match your query: <b><%= params["q"] %></b>.
+		<% if params["relevant"] %>
+		These are the messages that are prediceted to be <b><%= params["relevant"] == "1" ? "relevant" : "irrelevant" %></b>.
 		<% else %>
-		Showing all messages.
+		These are the messages that are prediceted to be <b>relevant</b>.
 		<% end %>
 	</p>
 	</div>
@@ -38,5 +46,3 @@
 
 	</div>		
 	<% end %>
-
-</div>

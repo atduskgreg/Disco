@@ -54,9 +54,18 @@ get "/features" do
 	erb :features
 end
 
-post "/emails/:email_id/labels" do
-	puts params.inspect
+get "/predictions" do
+	@relevant, @irrelevant = Prediction.all.partition{|p| p.relevant == 1}
+	@relevant = @relevant.collect(&:email)
+	@irrelevant = @irrelevant.collect(&:email)
 
+	@labeled_relevant = Label.all(:relevant => 1).collect(&:email)
+	@labeled_irrelevant = Label.all(:relevant => 0).collect(&:email)
+
+	erb :predictions
+end
+
+post "/emails/:email_id/labels" do
 	relevant = params[:relevant] == "relevant" ? 1 : 0
 	puts relevant
 	email = Email.get params[:email_id]
